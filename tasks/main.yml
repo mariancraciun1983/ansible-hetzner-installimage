@@ -1,0 +1,23 @@
+---
+- name: rescue
+  block:
+  - name: rescue | reinstall confirmation
+    pause:
+      prompt: Are you sure you wan to reinstall the OS? Type "yes" to continue
+      echo: yes
+    run_once: True
+    register: confirm_reinstall
+  - name: rescue | handle confirmation
+    assert:
+      that: confirm_reinstall.user_input|bool
+      quiet: yes
+      fail_msg: Cancelling reinstall
+  - name: rescue
+    import_tasks: rescue.yml
+  tags:
+    - rescue
+
+- name: installimage
+  import_tasks: installimage.yml
+  tags:
+    - installimage

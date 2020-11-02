@@ -1,0 +1,42 @@
+---
+language: python
+services: docker
+
+python:
+  - "2.7"
+  - "3.5"
+
+# Use the new container infrastructure
+sudo: false
+
+env:
+  - ANSIBLE_VERSION=latest
+  - ANSIBLE_VERSION=2.9
+  - ANSIBLE_VERSION=2.8
+  - ANSIBLE_VERSION=2.7
+  - ANSIBLE_VERSION=2.4
+  - ANSIBLE_VERSION=2.2
+
+# Install ansible
+addons:
+  apt:
+    packages:
+    - python-pip
+
+install:
+  # Install ansible and ansible-lint
+  - pip install ansible ansible-lint
+
+  # Check ansible version
+  - ansible --version
+
+  # Create ansible.cfg with correct roles_path
+  - printf '[defaults]\nroles_path=../' >ansible.cfg
+
+script:
+  # Basic role syntax check and lint
+  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+  - ansible-lint tests/test.yml -i
+
+# notifications:
+#   webhooks: https://galaxy.ansible.com/api/v1/notifications/

@@ -1,0 +1,55 @@
+## ====================
+##  HARD DISK DRIVE(S):
+## ====================
+{% for dev, dev_info in ansible_devices.iteritems() if dev.startswith("sd") %}
+# Onboard: {{ dev_info.model }} {{ dev_info.serial }}
+DRIVE{{ loop.index }} /dev/{{ dev }}
+{% endfor %}
+
+## ===============
+##  SOFTWARE RAID:
+## ===============
+## activate software RAID?  < 0 | 1 >
+SWRAID {{ swraid }}
+## Choose the level for the software RAID < 0 | 1 | 10 >
+SWRAIDLEVEL {{ swraid_level }}
+
+## ==========
+##  HOSTNAME:
+## ==========
+HOSTNAME {{ hostname }}
+
+{% if authorized_key_url %}
+# SSH keys to put on the installed system
+SSHKEYS_URL {{ authorized_key_url }}
+{% endif %}
+
+## ==========================
+##  PARTITIONS / FILESYSTEMS:
+## ==========================
+# normal filesystems and volume group definitions
+{% for part in partitions -%}
+PART {{ part.mountpoint }} {{ part.filesystem }} {{ part.size }}
+{% endfor %}
+# logical volume definitions
+{% for lv in volumes -%}
+LV {{ lv.vg }} {{ lv.name }} {{ lv.mountpoint }} {{ lv.filesystem }} {{ lv.size }}
+{% endfor %}
+
+## ========================
+##  OPERATING SYSTEM IMAGE:
+## ========================
+## full path to the operating system image
+##   supported image sources:  local dir,  ftp,  http,  nfs
+##   supported image types: tar, tar.gz, tar.bz, tar.bz2, tar.xz, tgz, tbz, txz
+IMAGE /root/.oldroot/nfs/images/{{ installer_image['code'] }}-64-minimal.tar.gz
+
+## ========================
+##  Custom settings
+## ========================
+{% if additional_settings -%}
+{% for settings in additional_settings -%}
+
+{{ settings }}
+{% endfor %}
+{% endif %}

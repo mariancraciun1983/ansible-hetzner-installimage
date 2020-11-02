@@ -1,0 +1,82 @@
+---
+- name: installimage | lookup for host ip address
+  command: getent hosts {{ inventory_hostname }} | cut -d' ' -f1
+  register: host_ip_address
+  failed_when: host_ip_address.stderr or not host_ip_address.stdout
+  changed_when: no
+  delegate_to: localhost
+
+- name: installimage | hostname
+  block:
+  - name: installimage | hostname | check hostname
+    assert:
+      that: host_ip_address.stdout != inventory_hostname
+      quiet: yes
+      fail_msg: >-
+        The hostname must be set in case you are using ip addresses
+        as we can't get it from the inventory_hostname_short variable.
+    when: not hostname
+  - name: installimage | hostname | set hostname fact
+    set_fact:
+      hostname: "{{ inventory_hostname_short }}"
+    when: not hostname
+
+- name: installimage | image
+  block:
+  - name: installimage | image | check for supported distro
+    assert:
+      that:
+        - image.distro | mandatory in images_map.keys()
+      quiet: yes
+      fail_msg: The distro {{ image.distro }} does not seem to be set or in the supported distros
+  - name: installimage | image | check for supported distro version
+    assert:
+      that:
+        - images_map[image.distro] | selectattr('ver', 'equalto', image.version) | list | length
+      quiet: yes
+      fail_msg: >-
+        The version {{ image.version }} does not seem to be set or in the supported
+        versions of {{ image.distro }}
+
+  - name: installimage | set image file
+    set_fact:
+      installer_image: "{{ images_map[image.distro] | selectattr('ver', 'equalto', image.version) | list | first }}"
+
+- name: installimage | gather facts
+  setup:
+
+- name: installimage | ensure we are in rescue
+  assert:
+    that: ansible_hostname == "rescue"
+    quiet: yes
+    fail_msg: It seems that the server is not into rescue mode
+
+- name: installimage | lookup for installimage dir
+  stat:
+    path: /root/.oldroot/nfs
+  register: st
+
+- name: installimage | ensure installimage exists
+  assert:
+    that: st.stat.exists
+    quiet: yes
+    fail_msg: It seems that the installimage directory is missing
+
+- name: installimage | deploy installimage.conf
+  template:
+    src: installimage.j2
+    dest: /installimage.conf
+    mode: 0644
+
+- name: installimage | install the image
+  command: /root/.oldroot/nfs/install/installimage -c /installimage.conf -a
+  changed_when: yes
+
+- name: installimage | reboot server
+  reboot:
+    post_reboot_delay: 20
+  when: reboot_installimage|bool
+
+- name: installimage | gather facts of installed os
+  setup:
+  when: reboot_installimage|bool

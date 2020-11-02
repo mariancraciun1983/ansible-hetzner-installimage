@@ -1,0 +1,67 @@
+---
+# Hetzner's Robot Webservice User and Password
+robotws_endpoint: https://robot-ws.your-server.de
+robotws_user:
+robotws_password:
+
+# authorized_key to use as md5 for Hetzner's rescue mode
+authorized_key_file: "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
+authorized_key_md5:
+
+# authorized_key url eg: https://github.com/username.keys
+authorized_key_url:
+
+# preferred hostname for the installed OS
+hostname:
+
+# distro os/version to install
+images_map:
+  ubuntu:
+    - ver: 20.04
+      code: Ubuntu-2004-focal
+    - ver: 18.04
+      code: Ubuntu-1804-bionic
+    - ver: 16.04
+      code: Ubuntu-1604-xenial
+  debian:
+    - ver: 10.3
+      code: Debian-104-buster
+    - ver: 9.12
+      code: Debian-912-stretch
+  centos:
+    - ver: 8.1
+      code: CentOS-82
+    - ver: 7.7
+      code: CentOS-78
+image:
+  distro: ubuntu
+  version: 20.04
+
+# disk configuration
+swraid: 1
+swraid_level: 1
+partitions:
+  - mountpoint: /boot
+    filesystem: ext4
+    size: 1G
+  - mountpoint: lvm
+    filesystem: vg0
+    size: all
+volumes:
+  - vg: vg0
+    name: tmp
+    mountpoint: /tmp
+    filesystem: ext4
+    size: "5G"
+  - vg: vg0
+    name: root
+    mountpoint: /
+    filesystem: xfs
+    size: all
+
+# array of additional settings to add to the installimage.conf file
+# (eg: IMAGE /root/.oldroot/nfs/images/Archlinux-2017-64-minimal.tar.gz)
+additional_settings:
+
+# reboot after installing the new image
+reboot_installimage: yes
