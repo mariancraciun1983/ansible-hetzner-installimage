@@ -4,7 +4,7 @@
   command: getent hosts {{ inventory_hostname }} | cut -d' ' -f1
   register: host_ip_address
   failed_when: host_ip_address.stderr or not host_ip_address.stdout
-  changed_when: no
+  changed_when: false
   delegate_to: localhost
 
 - name: rescue | set host_ip fact
@@ -14,49 +14,49 @@
 # generate md5 of the public ssh key which is needed for rescue system authentication
 - name: rescue | ssh
   block:
-  - name: rescue | ssh | key check authorized_key_file is set
-    assert:
-      that: not not authorized_key_file
-      quiet: yes
-      fail_msg: >-
-          The authorized_key_file is required in order to generate the md5
-          fingerprint used when connecting to the rescue system
-  - name: rescue | ssh | get local SSH key md5
-    shell: ssh-keygen -E md5 -lf {{ authorized_key_file }}  | awk '{ print $2 }' | cut -c 5-
-    register: ssk_key_md5
-    failed_when: ssk_key_md5.stderr or not ssk_key_md5.stdout
-    changed_when: no
-    delegate_to: localhost
-  - name: rescue | set authorized_key_md5 fact
-    set_fact:
-      authorized_key_md5: "{{ ssk_key_md5.stdout }}"
+    - name: rescue | ssh | key check authorized_key_file is set
+      assert:
+        that: not not authorized_key_file
+        quiet: true
+        fail_msg: >-
+            The authorized_key_file is required in order to generate the md5
+            fingerprint used when connecting to the rescue system
+    - name: rescue | ssh | get local SSH key md5
+      shell: ssh-keygen -E md5 -lf {{ authorized_key_file }}  | awk '{ print $2 }' | cut -c 5-
+      register: ssk_key_md5
+      failed_when: ssk_key_md5.stderr or not ssk_key_md5.stdout
+      changed_when: false
+      delegate_to: localhost
+    - name: rescue | set authorized_key_md5 fact
+      set_fact:
+        authorized_key_md5: "{{ ssk_key_md5.stdout }}"
   when: not authorized_key_md5
 
 # in this block we will also validate the credentials
 - name: rescue | authorized key
   block:
-  - name: rescue | authorized key | check that ssh key md5 is registerd (Robot WebService)
-    uri:
-      url: "{{ robotws_endpoint }}/key/{{ authorized_key_md5 }}"
-      user: "{{ robotws_user | mandatory }}"
-      password: "{{ robotws_password | mandatory }}"
-      method: GET
-    failed_when: no
-    changed_when: no
-    register: key_md5_exists
-    delegate_to: localhost
-  - name: rescue | ssh | auth failure
-    assert:
-      that: key_md5_exists.status != 401
-      quiet: yes
-      fail_msg: Got Authentication error - most probably the user/password are wrong
-  - name: rescue | ssh | key check authorized_key_file is set
-    assert:
-      that: key_md5_exists.status == 200
-      quiet: yes
-      fail_msg: >-
-          The {{ authorized_key_md5 }} authorized key md5 was not found in your account.
-          Go to https://robot.your-server.de/key/index and add it first.
+    - name: rescue | authorized key | check that ssh key md5 is registerd (Robot WebService)
+      uri:
+        url: "{{ robotws_endpoint }}/key/{{ authorized_key_md5 }}"
+        user: "{{ robotws_user | mandatory }}"
+        password: "{{ robotws_password | mandatory }}"
+        method: GET
+      failed_when: false
+      changed_when: false
+      register: key_md5_exists
+      delegate_to: localhost
+    - name: rescue | ssh | auth failure
+      assert:
+        that: key_md5_exists.status != 401
+        quiet: true
+        fail_msg: Got Authentication error - most probably the user/password are wrong
+    - name: rescue | ssh | key check authorized_key_file is set
+      assert:
+        that: key_md5_exists.status == 200
+        quiet: true
+        fail_msg: >-
+            The {{ authorized_key_md5 }} authorized key md5 was not found in your account.
+            Go to https://robot.your-server.de/key/index and add it first.
 
 - name: rescue | activate Hetzner Rescue (Robot WebService)
   uri:

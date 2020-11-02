@@ -1,42 +1,66 @@
 ---
 language: python
-services: docker
-
-python:
-  - "2.7"
-  - "3.5"
-
-# Use the new container infrastructure
-sudo: false
+os: linux
+cache: pip
 
 env:
-  - ANSIBLE_VERSION=latest
-  - ANSIBLE_VERSION=2.9
-  - ANSIBLE_VERSION=2.8
-  - ANSIBLE_VERSION=2.7
-  - ANSIBLE_VERSION=2.4
-  - ANSIBLE_VERSION=2.2
+  global:
+    - ANSIBLE_CONFIG=~/.ansible/ansible.cfg
+
+jobs:
+  include:
+    - python: 3.8
+      env: ANSIBLE_VERSION=latest
+    - python: 3.8
+      env: ANSIBLE_VERSION==2.9.0
+    - python: 3.8
+      env: ANSIBLE_VERSION==2.8.0
+
+    - python: 3.6
+      env: ANSIBLE_VERSION=latest
+    - python: 3.6
+      env: ANSIBLE_VERSION==2.9.0
+    - python: 3.6
+      env: ANSIBLE_VERSION==2.8.0
+
+    - python: 2.7
+      env: ANSIBLE_VERSION==2.8.0
+    - python:  2.7
+      env: ANSIBLE_VERSION==2.7.0
+
 
 # Install ansible
-addons:
-  apt:
-    packages:
-    - python-pip
+# addons:
+#   apt:
+#     packages:
+#     - python-pip
+
+branches:
+  only:
+    - master
+    - develop
+
+before_install:
+  - python --version
 
 install:
   # Install ansible and ansible-lint
-  - pip install ansible ansible-lint
+  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible; else pip
+    install ansible==$ANSIBLE_VERSION; fi
+  - pip install ansible-lint yamllint
 
-  # Check ansible version
+  # Check versions
   - ansible --version
+  - ansible-lint --version
 
   # Create ansible.cfg with correct roles_path
-  - printf '[defaults]\nroles_path=../' >ansible.cfg
+  - printf '[defaults]\nroles_path=../' > ~/.ansible/ansible.cfg
 
 script:
   # Basic role syntax check and lint
-  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
-  - ansible-lint tests/test.yml -i
+  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check -vv
+  - yamllint .
+  - ansible-lint tests/test.yml -vvv
 
 # notifications:
 #   webhooks: https://galaxy.ansible.com/api/v1/notifications/

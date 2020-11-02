@@ -5,22 +5,22 @@ galaxy_info:
   description: Reinstall OS using Hetzner's WebServices and installimage
   license: MIT
 
-  min_ansible_version: 2.7
+  min_ansible_version: 2.6
   galaxy_tags:
     - hetzner
     - installimage
   platforms:
-  - name: Debian
-    versions:
-    - buster
-    - stretch
-  - name: Ubuntu
-    versions:
-    - focal
-    - bionic
-    - xenial
-  - name: EL
-    versions:
-    - 8
-    - 7
+    - name: Debian
+      versions:
+        - buster
+        - stretch
+    - name: Ubuntu
+      versions:
+        - focal
+        - bionic
+        - xenial
+    - name: EL
+      versions:
+        - 8
+        - 7
 dependencies: []

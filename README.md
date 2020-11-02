@@ -1,7 +1,17 @@
-# Hetzner Installimage Ansible Role
+<h1 align="center">Hetzner Installimage Ansible Role</h1>
 
 
-[![Build Status](https://travis-ci.org/mariancraciun1983/ansible-hetzner-installimage.svg?branch=master)](https://travis-ci.org/mariancraciun1983/ansible-hetzner-installimage)
+<div align="center">
+  <a href="https://travis-ci.org/mariancraciun1983/ansible-hetzner-installimage">
+    <img src="https://travis-ci.org/mariancraciun1983/ansible-hetzner-installimage.svg?branch=master" alt="Build Status" />
+  </a>
+  <a href="https://galaxy.ansible.com/mariancraciun1983/ansible-hetzner-installimage">
+    <img src="https://img.shields.io/badge/ansible--galaxy-haproxy-blue.svg" alt="Ansible Galaxy" />
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" />
+  </a>
+</div>
 
 
 Ansible role for re-installing OS on [Hetzner dedicated servers](https://www.hetzner.com/dedicated-rootserver) using [Hetzner APIs](https://robot.your-server.de/doc/webservice/en.html) and [InstallImage](https://docs.hetzner.com/robot/dedicated-server/operating-systems/installimage/)
@@ -14,14 +24,14 @@ Hetzner offers dedicated servers ranging from cheap i7, AMD to high performance 
 ## Requirements & Dependencies
 
 ### Hetzner
-- [Hetzner server](https://www.hetzner.com/dedicated-rootserver)
+- dedicated [Hetzner Root server](https://www.hetzner.com/dedicated-rootserver)
 - SSH key added to the [Key Management](https://robot.your-server.de/key/index)
 - WebService activated with user/pass (https://robot.your-server.de/preferences/index)
 
-PS: make sure that you the default port 22 is accesible from your machine (ex: )
+PS: make sure that you the default port 22 is accesible from your machine (ex: whitelisted in the hetzner firewall)
 
 ### Ansible
-This role was tested against Ansible version 2.2 2.4 2.7 2.8 2.9
+This role was tested against Ansible version 2.7 2.8 2.9 2.10
 
 
 ## Variables
@@ -39,27 +49,27 @@ image:
 
 ## Example
 
-inventory
 ```ini
+# inventory
 [servers]
 1.2.3.4 hostname=node1
 node2.example.com
 ```
 
-playbook.yml
 ```yaml
+# playbook.yml
 - hosts: servers
   roles:
-    - mcraciun.hetzner_install_image
+    - mariancraciun1983.hetzner_install_image
 ```
 
-install the role
 ```bash
-ansible-galaxy install mcraciun.hetzner_install_image
+# install the role
+ansible-galaxy install mariancraciun1983.hetzner_install_image
 ```
 
-run the playbook
 ```bash
+# run the playbook
 ansible-playbook -i inventory playbook.yml
 ```
 

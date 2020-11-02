@@ -4,3 +4,4 @@ inventory
 vars.yml
 ._*
 *.py[co]
+.python-version

@@ -3,7 +3,7 @@
   command: getent hosts {{ inventory_hostname }} | cut -d' ' -f1
   register: host_ip_address
   failed_when: host_ip_address.stderr or not host_ip_address.stdout
-  changed_when: no
+  changed_when: false
   delegate_to: localhost
 
 - name: installimage | hostname
@@ -11,7 +11,7 @@
   - name: installimage | hostname | check hostname
     assert:
       that: host_ip_address.stdout != inventory_hostname
-      quiet: yes
+      quiet: true
       fail_msg: >-
         The hostname must be set in case you are using ip addresses
         as we can't get it from the inventory_hostname_short variable.
@@ -23,24 +23,24 @@
 
 - name: installimage | image
   block:
-  - name: installimage | image | check for supported distro
-    assert:
-      that:
-        - image.distro | mandatory in images_map.keys()
-      quiet: yes
-      fail_msg: The distro {{ image.distro }} does not seem to be set or in the supported distros
-  - name: installimage | image | check for supported distro version
-    assert:
-      that:
-        - images_map[image.distro] | selectattr('ver', 'equalto', image.version) | list | length
-      quiet: yes
-      fail_msg: >-
-        The version {{ image.version }} does not seem to be set or in the supported
-        versions of {{ image.distro }}
+    - name: installimage | image | check for supported distro
+      assert:
+        that:
+          - image.distro | mandatory in images_map.keys()
+        quiet: true
+        fail_msg: The distro {{ image.distro }} does not seem to be set or in the supported distros
+    - name: installimage | image | check for supported distro version
+      assert:
+        that:
+          - images_map[image.distro] | selectattr('ver', 'equalto', image.version) | list | length
+        quiet: true
+        fail_msg: >-
+          The version {{ image.version }} does not seem to be set or in the supported
+          versions of {{ image.distro }}
 
-  - name: installimage | set image file
-    set_fact:
-      installer_image: "{{ images_map[image.distro] | selectattr('ver', 'equalto', image.version) | list | first }}"
+- name: installimage | set image file
+  set_fact:
+    installer_image: "{{ images_map[image.distro] | selectattr('ver', 'equalto', image.version) | list | first }}"
 
 - name: installimage | gather facts
   setup:
@@ -48,7 +48,7 @@
 - name: installimage | ensure we are in rescue
   assert:
     that: ansible_hostname == "rescue"
-    quiet: yes
+    quiet: true
     fail_msg: It seems that the server is not into rescue mode
 
 - name: installimage | lookup for installimage dir
@@ -59,7 +59,7 @@
 - name: installimage | ensure installimage exists
   assert:
     that: st.stat.exists
-    quiet: yes
+    quiet: true
     fail_msg: It seems that the installimage directory is missing
 
 - name: installimage | deploy installimage.conf
@@ -70,7 +70,7 @@
 
 - name: installimage | install the image
   command: /root/.oldroot/nfs/install/installimage -c /installimage.conf -a
-  changed_when: yes
+  changed_when: true
 
 - name: installimage | reboot server
   reboot:

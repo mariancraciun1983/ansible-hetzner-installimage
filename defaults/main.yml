@@ -4,6 +4,9 @@ robotws_endpoint: https://robot-ws.your-server.de
 robotws_user:
 robotws_password:
 
+# ask for confirmation before reboot/reinstall
+reinstall_confirmation: true
+
 # authorized_key to use as md5 for Hetzner's rescue mode
 authorized_key_file: "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
 authorized_key_md5:
@@ -64,4 +67,4 @@ volumes:
 additional_settings:
 
 # reboot after installing the new image
-reboot_installimage: yes
+reboot_installimage: true
