@@ -1,7 +1,11 @@
 ---
 # detect ip address of the host which is needed for server reboot
 - name: rescue | lookup for host ip address
-  command: getent hosts {{ inventory_hostname }} | cut -d' ' -f1
+  shell: >-
+    set -o pipefail &&
+    getent hosts {{ inventory_hostname }} | cut -d' ' -f1
+  args:
+    executable: /bin/bash
   register: host_ip_address
   failed_when: host_ip_address.stderr or not host_ip_address.stdout
   changed_when: false

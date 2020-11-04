@@ -1,6 +1,9 @@
 ---
 ansible_port: 22
 ansible_user: root
+# rescue already has python3 installed
+ansible_python_interpreter: python3
+# rescue ssh keys should not polute the existing known_hosts
 ansible_ssh_extra_args: >-
   -o UserKnownHostsFile=/dev/null
   -o StrictHostKeyChecking=no

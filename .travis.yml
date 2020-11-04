@@ -28,13 +28,6 @@ jobs:
     - python:  2.7
       env: ANSIBLE_VERSION==2.7.0
 
-
-# Install ansible
-# addons:
-#   apt:
-#     packages:
-#     - python-pip
-
 branches:
   only:
     - master
@@ -62,5 +55,5 @@ script:
   - yamllint .
   - ansible-lint tests/test.yml -vvv
 
-# notifications:
-#   webhooks: https://galaxy.ansible.com/api/v1/notifications/
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
