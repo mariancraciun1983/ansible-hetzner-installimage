@@ -1,18 +1,21 @@
 <h1 align="center">Hetzner Installimage Ansible Role</h1>
-
+<br />
 
 <div align="center">
   <a href="https://travis-ci.org/mariancraciun1983/ansible-hetzner-installimage">
     <img src="https://travis-ci.org/mariancraciun1983/ansible-hetzner-installimage.svg?branch=master" alt="Build Status" />
   </a>
   <a href="https://galaxy.ansible.com/mariancraciun1983/ansible-hetzner-installimage">
-    <img src="https://img.shields.io/badge/ansible--galaxy-haproxy-blue.svg" alt="Ansible Galaxy" />
+    <img src="https://img.shields.io/ansible/role/51609" alt="Ansible Galaxy" />
+  </a>
+  <a href="https://galaxy.ansible.com/mariancraciun1983/ansible-hetzner-installimage">
+    <img src="https://img.shields.io/ansible/quality/51609" alt="Ansible Quality Score" />
   </a>
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" />
   </a>
 </div>
-
+<br />
 
 Ansible role for re-installing OS on [Hetzner dedicated servers](https://www.hetzner.com/dedicated-rootserver) using [Hetzner APIs](https://robot.your-server.de/doc/webservice/en.html) and [InstallImage](https://docs.hetzner.com/robot/dedicated-server/operating-systems/installimage/)
 
@@ -54,6 +57,7 @@ image:
 [servers]
 1.2.3.4 hostname=node1
 node2.example.com
+
 ```
 
 ```yaml

@@ -1,6 +1,10 @@
 ---
 - name: installimage | lookup for host ip address
-  command: getent hosts {{ inventory_hostname }} | cut -d' ' -f1
+  shell: >-
+    set -o pipefail &&
+    getent hosts {{ inventory_hostname }} | cut -d' ' -f1
+  args:
+    executable: /bin/bash
   register: host_ip_address
   failed_when: host_ip_address.stderr or not host_ip_address.stdout
   changed_when: false
@@ -8,18 +12,18 @@
 
 - name: installimage | hostname
   block:
-  - name: installimage | hostname | check hostname
-    assert:
-      that: host_ip_address.stdout != inventory_hostname
-      quiet: true
-      fail_msg: >-
-        The hostname must be set in case you are using ip addresses
-        as we can't get it from the inventory_hostname_short variable.
-    when: not hostname
-  - name: installimage | hostname | set hostname fact
-    set_fact:
-      hostname: "{{ inventory_hostname_short }}"
-    when: not hostname
+    - name: installimage | hostname | check hostname
+      assert:
+        that: host_ip_address.stdout != inventory_hostname
+        quiet: true
+        fail_msg: >-
+          The hostname must be set in case you are using ip addresses
+          as we can't get it from the inventory_hostname_short variable.
+      when: not hostname
+    - name: installimage | hostname | set hostname fact
+      set_fact:
+        hostname: "{{ inventory_hostname_short }}"
+      when: not hostname
 
 - name: installimage | image
   block:
@@ -75,8 +79,4 @@
 - name: installimage | reboot server
   reboot:
     post_reboot_delay: 20
-  when: reboot_installimage|bool
-
-- name: installimage | gather facts of installed os
-  setup:
   when: reboot_installimage|bool
