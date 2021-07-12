@@ -1,8 +1,8 @@
 ## ====================
 ##  HARD DISK DRIVE(S):
 ## ====================
-{% for item in ansible_devices | dict2items if item.key.startswith("sd") %}
-# Onboard: {{ item.value.model }} {{ item.value.serial }}
+{% for item in ansible_devices | dict2items if item.key.startswith(installimage_device_prefix) %}
+# Onboard: {{ item.value.model | default('') }} {{ item.value.serial | default('') }}
 DRIVE{{ loop.index }} /dev/{{ item.key }}
 {% endfor %}
 
@@ -32,9 +32,11 @@ SSHKEYS_URL {{ authorized_key_url }}
 PART {{ part.mountpoint }} {{ part.filesystem }} {{ part.size }}
 {% endfor %}
 # logical volume definitions
+{% if volumes -%}
 {% for lv in volumes -%}
 LV {{ lv.vg }} {{ lv.name }} {{ lv.mountpoint }} {{ lv.filesystem }} {{ lv.size }}
 {% endfor %}
+{% endif %}
 
 ## ========================
 ##  OPERATING SYSTEM IMAGE:
