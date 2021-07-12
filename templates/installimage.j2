@@ -32,9 +32,11 @@ SSHKEYS_URL {{ authorized_key_url }}
 PART {{ part.mountpoint }} {{ part.filesystem }} {{ part.size }}
 {% endfor %}
 # logical volume definitions
+{% if volumes -%}
 {% for lv in volumes -%}
 LV {{ lv.vg }} {{ lv.name }} {{ lv.mountpoint }} {{ lv.filesystem }} {{ lv.size }}
 {% endfor %}
+{% endif %}
 
 ## ========================
 ##  OPERATING SYSTEM IMAGE:
