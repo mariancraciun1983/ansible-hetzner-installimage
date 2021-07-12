@@ -68,3 +68,6 @@ additional_settings:
 
 # reboot after installing the new image
 reboot_installimage: true
+
+# allow to override which devices you want to be detected for installing the system
+installimage_device_prefix: sd

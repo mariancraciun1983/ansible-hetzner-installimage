@@ -1,8 +1,8 @@
 ## ====================
 ##  HARD DISK DRIVE(S):
 ## ====================
-{% for item in ansible_devices | dict2items if item.key.startswith("sd") %}
-# Onboard: {{ item.value.model }} {{ item.value.serial }}
+{% for item in ansible_devices | dict2items if item.key.startswith(installimage_device_prefix) %}
+# Onboard: {{ item.value.model | default('') }} {{ item.value.serial | default('') }}
 DRIVE{{ loop.index }} /dev/{{ item.key }}
 {% endfor %}
 
