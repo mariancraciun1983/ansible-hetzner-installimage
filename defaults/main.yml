@@ -17,6 +17,13 @@ authorized_key_url:
 # preferred hostname for the installed OS
 hostname:
 
+# optional: image_url and image are mutual exclusive.
+#           If image_url is set, image is ignored.
+# image_url sets an URL from where the image to be used for installation is
+# retrieved.
+#
+# image_url: https://www.mydomain.com/releases/mysystem-2101-minimal.tar.gz
+
 # distro os/version to install
 images_map:
   ubuntu:

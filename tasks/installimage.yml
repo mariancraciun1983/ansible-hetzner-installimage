@@ -41,10 +41,25 @@
         fail_msg: >-
           The version {{ image.version }} does not seem to be set or in the supported
           versions of {{ image.distro }}
+  when:
+    - image_url is not defined
 
 - name: installimage | set image file
   set_fact:
     installer_image: "{{ images_map[image.distro] | selectattr('ver', 'equalto', image.version) | list | first }}"
+  when:
+    - image_url is not defined
+
+- name: installimage | image_url | check if it is an URL
+  assert:
+    that:
+      - image_url.startswith("http://") or image_url.startswith("https://")
+    quiet: true
+    fail_msg: >-
+      If you have set an image_url this must be an real URL and start with
+      http:// or https://
+  when:
+    - image_url is defined
 
 - name: installimage | gather facts
   setup:
