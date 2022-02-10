@@ -42,7 +42,11 @@ LV {{ lv.vg }} {{ lv.name }} {{ lv.mountpoint }} {{ lv.filesystem }} {{ lv.size 
 ## full path to the operating system image
 ##   supported image sources:  local dir,  ftp,  http,  nfs
 ##   supported image types: tar, tar.gz, tar.bz, tar.bz2, tar.xz, tgz, tbz, txz
+{% if image_url is defined -%}
+IMAGE {{ image_url }}
+{% else %}
 IMAGE /root/.oldroot/nfs/images/{{ installer_image['code'] }}-64-minimal.tar.gz
+{% endif %}
 
 ## ========================
 ##  Custom settings
