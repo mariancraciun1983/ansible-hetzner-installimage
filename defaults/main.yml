@@ -27,6 +27,10 @@ hostname:
 # distro os/version to install
 images_map:
   ubuntu:
+    - ver: 21.10
+      code: Ubuntu-2110-impish
+    - ver: 20.10
+      code: Ubuntu-2010-focal
     - ver: 20.04
       code: Ubuntu-2004-focal
     - ver: 18.04
@@ -34,11 +38,19 @@ images_map:
     - ver: 16.04
       code: Ubuntu-1604-xenial
   debian:
+    - ver: 11.01
+      code: Debian-1101-bullseye
+    - ver: 10.10
+      code: Debian-1010-buster
     - ver: 10.3
       code: Debian-104-buster
     - ver: 9.12
       code: Debian-912-stretch
   centos:
+    - ver: 8.5
+      code: CentOS-85
+    - ver: 8.4
+      code: CentOS-84
     - ver: 8.1
       code: CentOS-82
     - ver: 7.7
